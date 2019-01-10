@@ -1,18 +1,21 @@
 <template>
     <div>
-    <k-form :rules='rules' :ref='login'>
+    <k-form :rules='rules' :model='form' ref='login'>
       <k-item label='用户名' prop='name'>
-        <k-input type='text' prop='name'></k-input>
+        <k-input type='text' prop='name' v-model="form.name"></k-input>
       </k-item>
 
       <k-item label='密 码' prop='pwd'>
-        <k-input type='password' prop='pwd'></k-input>
+        <test>
+          <k-input type='password' prop='pwd' v-model="form.pwd"></k-input>
+        </test>
       </k-item>
       <k-item>
-        <button @click="login()">登陆</button>
+        <el-button type="primary" @click="login()">登录</el-button>
       </k-item>
       
     </k-form>
+    {{form}}
     </div>
 </template>
 
@@ -20,6 +23,7 @@
 import KInput from "./KInput.vue";
 import KItem from "./KItem.vue";
 import KForm from "./KForm.vue";
+import Test from './test.vue';
 
 
 export default {
@@ -27,7 +31,8 @@ export default {
   components: {
     KInput,
     KItem,
-    KForm
+    KForm,
+    Test
   },
   data() {
     return {
@@ -40,11 +45,14 @@ export default {
           {required:true, message:'请输入密码'}
         ],
       },
+      form: {
+        name: '',
+        pwd: '',
+      }
     }
   },
   methods: {
     login() {
-      
       this.$refs.login.validate((res) => {
         if (res) {
           alert('提交登陆')
@@ -53,8 +61,6 @@ export default {
           return false
         }
       })
-      return false
-      alert(1)
     }
   },
   

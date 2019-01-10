@@ -17,7 +17,7 @@ import schema from "async-validator";
 
 export default {
   name: "KItem",
-  inject: ["rules"],
+  inject: ["rules", "model"],
   props: {
     label: {
       type: String,
@@ -28,8 +28,15 @@ export default {
       default: ""
     }
   },
+  created() {
+      
+    this.$on("inputValidate", this.validate);
+  },
   mounted() {
-    this.$parent.$emit("item", this);
+      if (this.prop) {
+          this.$parent.$emit("item", this);
+      }
+    
   },
   data() {
     return {
@@ -37,26 +44,25 @@ export default {
       isError: false
     };
   },
-  created() {
-    // this.$bus.$on("error", error => {});
-    // this.$bus.$on("success", () => {
-    //   (this.errorMsg = ""), (this.isError = false);
-    // });
-    this.$on("input", value => {
-      const validator = new schema({
-        [this.prop]: this.rules[this.prop]
+  methods: {
+    validate() {
+      return new Promise((resolve, reject) => {
+        const validator = new schema({
+          [this.prop]: this.rules[this.prop]
+        });
+        validator.validate({ [this.prop]: this.model[this.prop] }, error => {
+          if (error) {
+            this.errorMsg = error[0].message;
+            this.isError = true;
+            resolve(false)
+          } else {
+            this.errorMsg = "";
+            this.isError = false;
+            resolve(true)
+          }
+        });
       });
-      validator.validate({ [this.prop]: value }, error => {
-        if (error) {
-          this.errorMsg = error[0].message;
-          this.isError = true;
-          this.$parent.$emit('error', error)
-        } else {
-          this.errorMsg = "";
-          this.isError = false;
-        }
-      });
-    });
+    }
   }
 };
 </script>

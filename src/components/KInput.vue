@@ -24,8 +24,15 @@ export default {
   },
   methods: {
     input(e) {
+        let parent = this.$parent
+        let parentName = parent.$options.name
+        while (parentName != 'KItem') {
+            parent = parent.$parent
+            parentName = parent.$options.name
+        }
       this.value = e.target.value;
-      this.$parent.$emit('input', this.value)
+      this.$emit('input', this.value)
+      this.$parent.$emit('inputValidate', this.value)
     }
   }
 };
